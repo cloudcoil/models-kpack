@@ -28,8 +28,8 @@ pip install cloudcoil.models.kpack
 
 ```python
 from cloudcoil import apimachinery
-import cloudcoil.models.kpack.build.v1alpha2 as kpack
-import cloudcoil.models.kpack.core.v1alpha1 as core
+import cloudcoil.models.kpack.v1alpha2 as kpack
+import cloudcoil.models.kpack.core as core
 import cloudcoil.models.kubernetes.core.v1 as k8score
 
 # Create an Image resource
@@ -82,7 +82,7 @@ kpack.BuilderResource.delete("my-builder")
 ### Using the Fluent Builder API
 
 ```python
-from cloudcoil.models.kpack.build.v1alpha2 import Image
+from cloudcoil.models.kpack.v1alpha2 import Image
 
 # Create an Image using the fluent builder
 image = (
@@ -111,7 +111,7 @@ image = (
 ### Using the Context Manager Builder API
 
 ```python
-from cloudcoil.models.kpack.build.v1alpha2 import Image, BuilderResource
+from cloudcoil.models.kpack.v1alpha2 import Image, BuilderResource
 
 # Create an image using context managers
 with Image.new() as app_image:
