@@ -11,8 +11,7 @@ classifiers = [
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "cloudcoil>=0.5.0.dev0",
-    "cloudcoil.models.kubernetes",
+    "cloudcoil>=0.7.1,<0.8",
 ]
 keywords = ["cloud-native", "kubernetes", "kpack", "pydantic", "python", "async", "cloudcoil", "cloudcoil-models"]
 
@@ -58,13 +57,11 @@ dev = [
     "pytest>=8.3.4",
     "pytest-cov>=4.1.0",
     "ruff>=0.14",
-    "mkdocs-autorefs",
-    "datamodel-code-generator[http]",
     "types-pyyaml>=6.0.12.20241221",
     "ipython>=8.12.3",
     "pytest-sugar>=1.0.0",
     "pytest-asyncio>=0.25.0",
-    "cloudcoil[codegen,test]"
+    "cloudcoil[codegen,test]>=0.7.1,<0.8"
 ]
 
 [tool.mypy]
@@ -77,29 +74,8 @@ omit = ["cloudcoil/models/**"]
 only-include = ["cloudcoil"]
 
 [[tool.cloudcoil.codegen.models]]
-# Unique name for the models
-# This will be used as the name for the setuptools entrypoints
 namespace = "cloudcoil.models.kpack"
-# Split the crl urls by comma
 input = [
-    "https://raw.githubusercontent.com/buildpacks-community/kpack/refs/tags/v0.16.1/api/openapi-spec/swagger.json",
-]
-transformations = [
-    { match = "^io\\.k8s\\.apimachinery\\..*\\.(.+)", replace = "apimachinery.\\g<1>", namespace = "cloudcoil"},
-    { match = "^io\\.k8s\\.apiextensions-apiserver\\.pkg\\.apis\\.apiextensions\\.(.+)$", replace = "apiextensions.\\g<1>", namespace = "cloudcoil.models.kubernetes"},
-    { match = "^io\\.k8s\\.api\\.(.+)$", replace = "\\g<1>", namespace = "cloudcoil.models.kubernetes"},
-    { match = "^io\\.k8s\\.kube-aggregator\\.pkg\\.apis\\.(.+)$", replace = "\\g<1>", namespace = "cloudcoil.models.kubernetes"},
-    { match = "^kpack\\.core\\.v1alpha1\\.(.*)$", replace = "core.\\g<1>"},
-    { match = "^kpack\\.build\\.(.*)\\.(.*)$", replace = "\\g<1>.\\g<2>"},
-]
-
-aliases = [
-    {"from" = "builder", to = "builder_"},
-]
-updates = [
-    {match="^.*kpack\\.(.*)\\.(Image|Build|Buildpack|Builder|SourceResolver|ClusterStore|ClusterStack|ClusterBuildpack|ClusterBuilder)$",jsonpath="x-kubernetes-group-version-kind[0].kind", value="\\g<2>"},
-    {match="^.*kpack\\.(.*)\\.(Image|Build|Buildpack|Builder|SourceResolver|ClusterStore|ClusterStack|ClusterBuildpack|ClusterBuilder)$",jsonpath="x-kubernetes-group-version-kind[0].version", value="\\g<1>"},
-    {match="^.*kpack\\.(.*)\\.(Image|Build|Buildpack|Builder|SourceResolver|ClusterStore|ClusterStack|ClusterBuildpack|ClusterBuilder)$",jsonpath="x-kubernetes-group-version-kind[0].group", value="kpack.io"},
-    {match="^(.*kpack.*)\\.(Builder)$", jsonpath="title", value="\\g<1>.BuilderResource"},
-    {match="^(.*kpack.*)\\.(BuilderList)$", jsonpath="title", value="\\g<1>.BuilderResourceList"},
+    "https://raw.githubusercontent.com/buildpacks-community/kpack/refs/tags/v0.18.0/api/openapi-spec/swagger.json",
+    "schemas/lifecycle.json",
 ]
