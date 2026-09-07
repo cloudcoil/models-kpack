@@ -1,0 +1,20 @@
+[
+  "__init__.py",
+  "_lookup.py",
+  "core/__init__.py",
+  "core/v1.py",
+  "io/__init__.py",
+  "io/k8s/__init__.py",
+  "io/k8s/apimachinery/__init__.py",
+  "io/k8s/apimachinery/pkg/__init__.py",
+  "io/k8s/apimachinery/pkg/apis/__init__.py",
+  "io/k8s/apimachinery/pkg/apis/meta/__init__.py",
+  "io/k8s/apimachinery/pkg/apis/meta/v1.py",
+  "kpack/__init__.py",
+  "kpack/build/__init__.py",
+  "kpack/build/v1alpha1.py",
+  "kpack/build/v1alpha2.py",
+  "kpack/core/__init__.py",
+  "kpack/core/v1alpha1.py",
+  "py.typed"
+]
