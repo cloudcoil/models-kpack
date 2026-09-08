@@ -1,58 +1,80 @@
-# cloudcoil-models-kpack
+# cloudcoil.models.kpack
 
-Versioned kpack models for cloudcoil.
+Typed kpack resources for the Cloudcoil Kubernetes client.
 
-[![PyPI](https://img.shields.io/pypi/v/cloudcoil.models.kpack.svg)](https://pypi.python.org/pypi/cloudcoil.models.kpack)
-[![Downloads](https://static.pepy.tech/badge/cloudcoil.models.kpack)](https://pepy.tech/project/cloudcoil.models.kpack)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/license/apache-2-0/)
+[![PyPI](https://img.shields.io/pypi/v/cloudcoil.models.kpack.svg)](https://pypi.org/project/cloudcoil.models.kpack/)
 [![CI](https://github.com/cloudcoil/models-kpack/actions/workflows/ci.yml/badge.svg)](https://github.com/cloudcoil/models-kpack/actions/workflows/ci.yml)
-> [!WARNING]  
-> Models are generated from upstream 0.18.0 schemas with Cloudcoil 0.7. Run `make gen-models` to regenerate them.
 
-## 🔧 Installation
+## Install a published release
 
-> [!NOTE]
-> For versioning information and compatibility, see the [Versioning Guide](https://github.com/cloudcoil/cloudcoil/blob/main/VERSIONING.md).
+Requires Python 3.14+:
 
-Using [uv](https://github.com/astral-sh/uv) (recommended):
-
-```bash
-# Install with kpack support
+```sh
 uv add cloudcoil.models.kpack
-```
-
-Using pip:
-
-```bash
+# Or:
 pip install cloudcoil.models.kpack
 ```
 
-## Usage
+Select a version matching the upstream APIs you use and pin a compatible Cloudcoil
+minor. The [versioning guide](https://github.com/cloudcoil/cloudcoil/blob/main/VERSIONING.md)
+explains the upstream version and packaging revision. Model installation does not
+install Kubernetes or an upstream operator.
 
-Cloudcoil 0.7 generates a typed lookup function so callers do not need to depend on schema-derived module names:
+Use the [Cloudcoil documentation](https://cloudcoil.github.io/cloudcoil/) for client
+operations, controllers and admission. Report generation or packaging problems in
+[cloudcoil/cloudcoil](https://github.com/cloudcoil/cloudcoil/issues).
+
+Licensed under [Apache-2.0](https://github.com/cloudcoil/cloudcoil/blob/main/LICENSE).
+## kpack models
+
+Models are generated from pinned upstream schemas. Configuration, schema inputs
+and README sources are maintained in
+[cloudcoil/cloudcoil](https://github.com/cloudcoil/cloudcoil/tree/main/models/kpack);
+the generated package is in
+[cloudcoil/models-kpack](https://github.com/cloudcoil/models-kpack). Edit the
+source integration in Cloudcoil because generated repository edits are replaced
+on template refresh.
+
+### Use a typed resource
+
+After installing `cloudcoil.models.kpack`, use the package's typed lookup to
+select an exact Kubernetes kind and API version:
 
 ```python
 from cloudcoil.models.kpack import get_model
 
 Image = get_model("Image", api_version="kpack.io/v1alpha2")
-resource = Image.model_validate({
-    "metadata": {"name": "example"},
-    "spec": {'tag': 'example.com/app:latest', 'builder': {'name': 'builder', 'kind': 'ClusterBuilder'}, 'source': {'git': {'url': 'https://example.com/repo', 'revision': 'main'}}},
-})
-resource.create()
+
+for resource in Image.list(namespace="default"):
+    print(resource.name)
 ```
 
-Generated resources support validation, fluent builders, and the Cloudcoil client API.
+The lookup is local; `list` reads the configured cluster. Async code uses
+`await Image.async_list(namespace="default")`. Direct class imports are also supported; the
+lookup avoids depending on schema-derived module names.
 
-## Development
+Install the upstream kpack CRDs and operator separately before making API calls.
+The model package supplies Python types and client methods, not the operator.
+
+Use the shared [resource guide](https://cloudcoil.github.io/cloudcoil/resources/)
+for constructors, builders, writes and watches, and the
+[controller guide](https://cloudcoil.github.io/cloudcoil/controllers/) for
+reconciliation. Pydantic validates constructed models at runtime; generated
+annotations provide field completion and static type checking.
+
+### Maintain this integration
+
+From the Cloudcoil repository root:
 
 ```sh
-uv sync --dev
-make gen-models
-make lint test
-uv build
+make gen-repo-kpack
+make -C output/models-kpack lint test check-artifacts
 ```
 
-Generation uses the `namespace` and `input` configuration in `pyproject.toml`, with automatic resource identity and field alias inference. Generated modules are built on release branches; pull requests regenerate and test them before publishing.
+Rendering generates the models before validation. The
+[model release guide](https://cloudcoil.github.io/cloudcoil/model-releases/)
+covers source updates, artifact checks and publishing.
 
-`schemas/lifecycle.json` supplies the lifecycle API definitions omitted from the upstream v0.18.0 OpenAPI document, matching [the upstream Go types](https://github.com/buildpacks-community/kpack/blob/v0.18.0/pkg/apis/build/v1alpha2/cluster_lifecycle_types.go). Other Kubernetes types are generated with this package, so a separate Kubernetes model dependency is unnecessary.
+`schemas/lifecycle.json` supplies lifecycle definitions omitted from the pinned
+upstream OpenAPI document. Keep that supplement aligned with the upstream Go types
+when updating the integration.
